@@ -51,10 +51,14 @@ def response_not_found():
     # You can re-use most of the code from the 405 Method Not
     # Allowed response.
 
-    pass
+    return b"\r\n".join([
+                b"HTTP/1.1 404 not found",
+                b"",
+                b"You can't do that on this server!",
+            ])
     
 
-def resolve_uri(uri):
+def resolve_uri(uri, flatten_query=False, unquote=True):
     """
     This method should return appropriate content and a mime type.
 
@@ -90,7 +94,24 @@ def resolve_uri(uri):
     # file as a stream of bytes.
 
     content = b"not implemented"
-    mime_type = b"not implemented"
+    mime_type, encoding = mimetypes.guess_type(self.absolute_path)
+
+    if unquote:
+        uri = urllib.unquote(uri)
+    m = URI_RE.match(uri)
+    if m is None:
+        raise URIParseError(uri)
+    parts = m.groupdict()
+    if parts["port"] is not None:
+        parts["port"] = int(parts["port"])
+    if parts["query"] is not None:
+        parts["query"] = cgi.parse_qs(parts["query"])
+        if flatten_query:
+            parts["query"] = dict(
+                (key, val[0]) for key, val in parts["query"].items())
+    return parts
+
+    return "application/octet-stream"
 
     return content, mime_type
 
