@@ -94,30 +94,30 @@ def resolve_uri(uri):
     # Hint: When opening a file, use open(filename, "rb") to open and read the
     # file as a stream of bytes.
 
-    content = b"not implemented"
-    #mime_type, encoding = mimetypes.guess_type(self.absolute_path)
+    # content = b"not implemented"
+    # mime_type, encoding = mimetypes.guess_type(self.absolute_path)
 
-    #if hasattr(uri, "read"):
+    # if hasattr(uri, "read"):
     #    return uri
 
-    #if uri == '−':
+    # if uri == '−':
     #    import sys
 
     #    return sys.stdin
     # try to open with urllib (if source is http, ftp, or file URL)
-    #import urllib
-    #try:
+    # import urllib
+    # try:
     #    return urllib.urlopen(uri)
-    #except (IOError, OSError):
+    # except (IOError, OSError):
     #    pass
     # try to open with native open function (if source is pathname)
-    #try:
+    # try:
     #    return open(uri)
-    #except (IOError, OSError):
+    # except (IOError, OSError):
     #    pass
     # treat source as string
-    #from io import StringIO
-    #return StringIO.StringIO(str(uri))
+    # from io import StringIO
+    # return StringIO.StringIO(str(uri))
 
     relative_uri = "webroot" + uri
 
