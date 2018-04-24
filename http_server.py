@@ -1,6 +1,7 @@
 import socket
 import sys
 import os
+import mimetypes
 
 def response_ok(body=b"This is a minimal response", mimetype=b"text/plain"):
     """
@@ -58,7 +59,7 @@ def response_not_found():
             ])
     
 
-def resolve_uri(uri, flatten_query=False, unquote=True):
+def resolve_uri(uri):
     """
     This method should return appropriate content and a mime type.
 
@@ -94,26 +95,48 @@ def resolve_uri(uri, flatten_query=False, unquote=True):
     # file as a stream of bytes.
 
     content = b"not implemented"
-    mime_type, encoding = mimetypes.guess_type(self.absolute_path)
+    #mime_type, encoding = mimetypes.guess_type(self.absolute_path)
 
-    if unquote:
-        uri = urllib.unquote(uri)
-    m = URI_RE.match(uri)
-    if m is None:
-        raise URIParseError(uri)
-    parts = m.groupdict()
-    if parts["port"] is not None:
-        parts["port"] = int(parts["port"])
-    if parts["query"] is not None:
-        parts["query"] = cgi.parse_qs(parts["query"])
-        if flatten_query:
-            parts["query"] = dict(
-                (key, val[0]) for key, val in parts["query"].items())
-    return parts
+    #if hasattr(uri, "read"):
+    #    return uri
 
-    return "application/octet-stream"
+    #if uri == '−':
+    #    import sys
+
+    #    return sys.stdin
+    # try to open with urllib (if source is http, ftp, or file URL)
+    #import urllib
+    #try:
+    #    return urllib.urlopen(uri)
+    #except (IOError, OSError):
+    #    pass
+    # try to open with native open function (if source is pathname)
+    #try:
+    #    return open(uri)
+    #except (IOError, OSError):
+    #    pass
+    # treat source as string
+    #from io import StringIO
+    #return StringIO.StringIO(str(uri))
+
+    relative_uri = "webroot" + uri
+
+    if os.path.isdir(relative_uri):
+
+        mime_type = "text/plan".encode('utf8')
+        dir_contents = os.listdir(relative_uri)
+        str_dir_contents="\n".join(dir_contents)
+        str_dir_contents = str_dir_contents.encode('utf8')
+
+        return str_dir_contents, mime_type
+    else:
+        mime_type =mimetypes.guess_type(uri)[0].encode('utf8')
+
+        with open(relative_uri, 'rb') as file:
+            content = file.read()
 
     return content, mime_type
+
 
 
 def server(log_buffer=sys.stderr):
